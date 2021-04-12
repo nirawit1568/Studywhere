@@ -1,38 +1,203 @@
-.App {
-  text-align: center;
+/* Global */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Baloo Bhai 2", cursive;
+  font-style: normal;
 }
+/* Global */
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Navbar */
+.menubar {
+  width: 100%;
+  height: 80px;
   display: flex;
-  flex-direction: column;
+  margin-top: 1px;
+  justify-content: space-between;
+  position: fixed;
+  z-index: 1;
+  background-color: white;
+}
+.menubar ul {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+}
+.left img {
+  width: 25%;
+  display: block;
+}
+.left a {
+  display: block;
+  width: 100%;
+}
+.left {
   align-items: center;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  width: 55%;
+}
+.studywhere {
+  position: absolute;
+  margin-top: 25px;
+  margin-left: 110px;
+  font-size: 37px;
+}
+.searchbox {
+  width: 70%;
+  height: 35px;
+  margin-top: 27px;
+  display: flex;
+  flex-direction: row;
+}
+.searchlogo img {
+  width: 15px;
+  margin-top: 8px;
+}
+.searchlogo {
+  width: 7%;
+  height: 35px;
+  position: absolute;
+  margin-left: 10px;
+  margin-top: 4px;
+}
+.inputsearch {
+  width: 100%;
+  height: 40px;
+  border: 2px solid #cbc7c7;
+  border-radius: 5px;
+  padding: 0rem 2rem;
+}
+.right {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 20px;
+}
+.right ul li:nth-child(1) a {
+  color: black;
+  display: block;
+  font-weight: bold;
+  padding: 0.7rem 2rem;
+  text-decoration: none;
+}
+.right ul li:nth-child(2) a {
   color: white;
+  display: block;
+  font-weight: bold;
+  background-color: #f54b01;
+  padding: 0.7rem 2rem;
+  border-radius: 5px;
+  text-decoration: none;
 }
 
-.App-link {
-  color: #61dafb;
+/* Navbar */
+
+/* Buy course */
+.top {
+  display: flex;
+  flex-direction: row;
+}
+.piccourse img {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+.piccourse {
+  width: 50%;
+  height: 430px;
+  margin-top: 150px;
+  margin-left: 150px;
+}
+.detail {
+  background-color: #f5f5f7;
+  width: 30%;
+  height: 430px;
+  margin-left: 20px;
+  margin-top: 150px;
+  border-radius: 5px;
+}
+.detail h1 {
+  text-align: center;
+  margin-top: 10px;
+}
+.detail li {
+  margin-left: 30px;
+  margin-top: 10px;
+}
+.box {
+  display: flex;
+  margin-left: 10px;
+}
+.box h5 {
+  background-color: #e2e9ff;
+  color: #6181f4;
+  width: 120px;
+  height: 35px;
+  padding: 0.5rem 1rem;
+  margin-left: 10px;
+  text-align: center;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+.price {
+  display: flex;
+}
+.price img {
+  width: 80px;
+  margin-left: 140px;
+  margin-top: 60px;
+}
+.price h2 {
+  margin-top: 90px;
+}
+.detail a {
+  display: block;
+  text-decoration: none;
+  background-color: #f54b01;
+  width: 264px;
+  height: 64;
+  font-size: 30px;
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  margin-top: 30px;
+  margin-left: 80px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.description {
+  background-color: #f5f5f7;
+  width: 50%;
+  height: 350px;
+  margin-left: 150px;
+  border-radius: 5px;
+  margin-top: 50px;
+  padding: 1rem 2rem;
 }
+.description h2 {
+  border-left: 6px solid #ffcc46;
+}
+.bottom {
+  display: flex;
+}
+.comment {
+  background-color: #f5f5f7;
+  width: 30%;
+  height: 350px;
+  margin-left: 20px;
+  border-radius: 5px;
+  margin-top: 50px;
+  padding: 1rem 2rem;
+}
+.comment h2 {
+  margin-top: 10px;
+  border-left: 6px solid #ffcc46;
+}
+.comment p {
+  background-color: white;
+  width: 100%;
+  height: 70px;
+  margin-top: 20px;
+}
+/* Buy course */
