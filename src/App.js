@@ -1,14 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
-import BuyCourse from './Page/BuyCourse';
-import LearnCourse from './Page/LearnCourse';
-import Signin from './Page/Signin';
-
+import "./App.css";
+import BuyCourse from "./Page/BuyCourse";
+import LearnCourse from "./Page/LearnCourse";
+import Signin from "./Page/Signin";
+import { Switch, Route } from "react-router-dom";
+import Home from "./Page/Home";
+import SignUp from "./Page/SignUp";
+import MenuBar from "./Component/MenuBar";
+import CustomTheme from "./Component/Theme";
+import { Container } from "@material-ui/core";
+import MyCourse from "./Page/MyCourse";
+import Payment from "./Page/Payment";
 function App() {
   return (
-    <div className="App">
-      <LearnCourse/>
-    </div>
+    <CustomTheme>
+      <MenuBar />
+      <Container style={{ marginTop: 25 }}>
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route exact path="/signin">
+            <Signin />
+          </Route>
+          <Route exact path="/signup">
+            <SignUp />
+          </Route>
+          <Route exact path="/course/id/learn">
+            <LearnCourse />
+          </Route>
+          <Route exact path="/course/id">
+            <BuyCourse />
+          </Route>
+          <Route exact path="/my-course">
+            <MyCourse />
+          </Route>
+          <Route exact path="/payment">
+            <Payment />
+          </Route>
+        </Switch>
+      </Container>
+    </CustomTheme>
   );
 }
 
