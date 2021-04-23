@@ -1,7 +1,7 @@
 import "./App.css";
 import BuyCourse from "./Page/BuyCourse";
 import LearnCourse from "./Page/LearnCourse";
-import Signin from "./Page/Signin";
+import SignIn from "./Page/SignIn";
 import { Switch, Route } from "react-router-dom";
 import Home from "./Page/Home";
 import SignUp from "./Page/SignUp";
@@ -20,7 +20,7 @@ function App() {
             <Home />
           </Route>
           <Route exact path="/signin">
-            <Signin />
+            <SignIn />
           </Route>
           <Route exact path="/signup">
             <SignUp />

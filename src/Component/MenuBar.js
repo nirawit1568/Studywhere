@@ -39,7 +39,13 @@ function MenuBar() {
         <Button className={classes.button} component={Link} to="/my-course">
           MY Course
         </Button>
-        <Button className={classes.button} variant="contained" color="primary">
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/signin"
+        >
           Sign in
         </Button>
       </div>

@@ -1,16 +1,13 @@
-import React from 'react';
-import MenuBar from '../Component/MenuSign';
+import { Grid, Typography } from "@material-ui/core";
+import React from "react";
+import MenuBar from "../Component/MenuSign";
 
-function Signin(){
-    return(
-        <div className="Signin">
-            <MenuBar/>
-            <div className="TextSignin">
-                <h1>SIGN<span>In</span></h1>
-            </div>
-
-        </div>
-    );
-
+function SignIn() {
+  return (
+    <Grid container>
+      <Typography>SIGN</Typography>
+      <Typography>IN</Typography>
+    </Grid>
+  );
 }
-export default Signin;
+export default SignIn;
