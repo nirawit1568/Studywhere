@@ -10,6 +10,7 @@ import CustomTheme from "./Component/Theme";
 import { Container } from "@material-ui/core";
 import MyCourse from "./Page/MyCourse";
 import Payment from "./Page/Payment";
+import Wallet from "./Page/Wallet"
 function App() {
   return (
     <CustomTheme>
@@ -36,6 +37,9 @@ function App() {
           </Route>
           <Route exact path="/payment">
             <Payment />
+          </Route>
+          <Route exact path="/wallet">
+            <Wallet/>
           </Route>
         </Switch>
       </Container>
