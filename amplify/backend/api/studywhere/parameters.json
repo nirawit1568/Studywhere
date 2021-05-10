@@ -1,0 +1,11 @@
+{
+  "AppSyncApiName": "studywhere",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authstudywhere619c0cca",
+      "Outputs.UserPoolId"
+    ]
+  }
+}

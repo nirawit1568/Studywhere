@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -8,10 +8,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import guy from "../img/guy.png";
-import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import CardCourse from "../Component/CardCourse";
+import API, { graphqlOperation } from "@aws-amplify/api";
+import { getCustomer, listCourses } from "../graphql/queries";
+import { useSession } from "../contexts/userContext";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -58,39 +60,56 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const data = [
-  {
-    media: "https://source.unsplash.com/random",
-    title: "Python certification",
-    description:
-      "เรียนการเขียนโปรแกรมด้วยเทคโนโลยีล่าสุดของ Python แบบ Step By Step จากเริ่มต้นไปเป็นมือโปร",
-    creator: "Olan Samritjiarapon",
-    price: 85,
-  },
-  {
-    media: "https://source.unsplash.com/random",
-    title: "SQL essentials",
-    description:
-      "เรียนรู้การเขียน SQL Query ตั้งแต่ขั้นพื้นฐานไปจนถึงการใช้งานจริง เพื่อเตรียมความพร้อมขั้นพื้นฐานการเป็น Data Scientist!",
-    creator: "Olan Samritjiarapon",
-    price: 45,
-  },
-  {
-    media: "https://source.unsplash.com/random",
-    title: "UI Design With Figma",
-    description:
-      "เรียนรู้การเขียน SQL Query ตั้งแต่ขั้นพื้นฐานไปจนถึงการใช้งานจริง เพื่อเตรียมความพร้อมขั้นพื้นฐานการเป็น Data Scientist!",
-    creator: "Olan Samritjiarapon",
-    price: 25,
-  },
-];
-
 export default function MyCourse() {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const { user } = useSession();
   const classes = useStyles();
+  const [course, setCourse] = useState([]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  useEffect(() => {
+    if (user) {
+      fetchMyCourse();
+    }
+  }, [user]);
+
+  const fetchMyCourse = async () => {
+    try {
+      const id = [];
+      const data = await API.graphql(
+        graphqlOperation(getCustomer, { id: user?.sub })
+      );
+      const list = data.data.getCustomer.course.items;
+      await list.map((course) => id.push({ id: { eq: course.id } }));
+      const data_c = await API.graphql({
+        query: listCourses,
+        variables: { filter: { or: id } },
+      });
+      const list_c = data_c.data.listCourses.items;
+      setCourse(list_c);
+      console.log(list_c);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // const fetchCourse = async () => {
+  //   try {
+  //     const filter = {
+  //       or: [{ id: { eq: "c1" } }, { id: { eq: "c2" } }],
+  //     };
+  //     // const data = await API.graphql(graphqlOperation(listCourses));
+  //     const data = await API.graphql({
+  //       query: listCourses,
+  //       variables: { filter: filter },
+  //     });
+  //     const list = data.data.listCourses.items;
+  //     setCourse(list);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   return (
     <>
@@ -99,29 +118,29 @@ export default function MyCourse() {
           <Grid container>
             <Grid item xs={5}>
               <Typography variant="h4" component="h1" className={classes.hi}>
-                Hi USERNAME !
+                {user["custom:name"]}
               </Typography>
               <Typography>It’s good to see you again</Typography>
               <Button variant="contained" color="primary">
-                {"Learn even more >"}{" "}
+                {"Learn even more >"}
               </Button>
             </Grid>
-            <Grid xs={4}>
+            <Grid item xs={4}>
               <div className={classes.guy}>
-                <img src={guy} className={classes.img} />
+                <img src={guy} className={classes.img} alt="hello" />
               </div>
             </Grid>
-            <Grid xs={3} container>
+            <Grid item xs={3} container>
               <Grid item xs={3}>
                 <div className={classes.boxArt}></div>
                 <div className={classes.boxArt}></div>
               </Grid>
-              <Grid xs={9}>
+              <Grid item xs={9}>
                 <Typography className={classes.textAct}>
-                  4 Activity in progress
+                  {course.length} Activity in progress
                 </Typography>
                 <Typography className={classes.textAct}>
-                  8 Activity Finished
+                  0 Activity Finished
                 </Typography>
               </Grid>
             </Grid>
@@ -139,10 +158,9 @@ export default function MyCourse() {
           >
             <Tab label="My Course" />
             <Tab label="Finished" />
-            <Tab label="In Progress" />
           </Tabs>
-          {data.map((data) => (
-            <CardCourse data={data} show={false} bColor={true} />
+          {course.map((data) => (
+            <CardCourse key={data.id} data={data} show={false} bColor={true} />
           ))}
         </CardContent>
       </Card>

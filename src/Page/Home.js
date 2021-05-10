@@ -1,44 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button, makeStyles } from "@material-ui/core";
 import CardCourse from "../Component/CardCourse";
+import { useSession } from "../contexts/userContext";
+import API, { graphqlOperation } from "@aws-amplify/api";
+import { listCourses } from "../graphql/queries";
+import { createCustomer } from "../graphql/mutations";
 const useStyles = makeStyles({
   button: {
     fontWeight: "bold",
   },
 });
 
-const data = [
-  {
-    media: "https://source.unsplash.com/random",
-    title: "Python certification",
-    description:
-      "เรียนการเขียนโปรแกรมด้วยเทคโนโลยีล่าสุดของ Python แบบ Step By Step จากเริ่มต้นไปเป็นมือโปร",
-    creator: "Olan Samritjiarapon",
-    price: 85,
-  },
-  {
-    media: "https://source.unsplash.com/random",
-    title: "SQL essentials",
-    description:
-      "เรียนรู้การเขียน SQL Query ตั้งแต่ขั้นพื้นฐานไปจนถึงการใช้งานจริง เพื่อเตรียมความพร้อมขั้นพื้นฐานการเป็น Data Scientist!",
-    creator: "Olan Samritjiarapon",
-    price: 45,
-  },
-  {
-    media: "https://source.unsplash.com/random",
-    title: "UI Design With Figma",
-    description:
-      "เรียนรู้การเขียน SQL Query ตั้งแต่ขั้นพื้นฐานไปจนถึงการใช้งานจริง เพื่อเตรียมความพร้อมขั้นพื้นฐานการเป็น Data Scientist!",
-    creator: "Olan Samritjiarapon",
-    price: 25,
-  },
-];
-
 export default function Home() {
-  const [selButton, setSelButton] = React.useState(1);
+  const [selButton, setSelButton] = useState(1);
   const classes = useStyles();
+  const { user } = useSession();
+  const [course, setCourse] = useState([]);
+
+  useEffect(() => {
+    fetchCourse();
+  }, []);
+
+  const fetchCourse = async () => {
+    try {
+      const data = await API.graphql(graphqlOperation(listCourses));
+      const list = data.data.listCourses.items;
+      setCourse(list);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const upCustomer = async () => {
+    try {
+      const customer = await API.graphql(
+        graphqlOperation(createCustomer, { input: { id: user?.sub } })
+      );
+      console.log(customer);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <>
+      {/* <Button
+        size="large"
+        className={selButton === 1 ? classes.button : classes.but}
+        onClick={upCustomer}
+      >
+        Create My course
+      </Button> */}
       <div>
         <Button
           size="large"
@@ -62,8 +74,8 @@ export default function Home() {
           The newest
         </Button>
       </div>
-      {data.map((data) => (
-        <CardCourse data={data} show={true} />
+      {course.map((data) => (
+        <CardCourse key={"548" + data.title} data={data} show={true} />
       ))}
       {/* <CardCourse show={true} /> */}
     </>

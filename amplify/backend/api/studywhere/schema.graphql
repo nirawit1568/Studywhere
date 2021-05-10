@@ -1,0 +1,28 @@
+
+type customer @model {
+  id: ID!
+  course: [OwnCourse!] @connection(keyName:"byCustomer", fields:["id"])
+}
+
+type OwnCourse @model @key(name:"byCustomer", fields:["customerID"]) {
+  id: ID!
+  customerID: ID!
+}
+
+type Course @model{
+  id: ID!
+  title: String!
+  price: Int!
+  description: String!
+  author: String!
+  cover: String!
+  video: [Video] @connection(keyName: "byCourse", fields: ["id"])
+}
+
+type Video @model @key(name: "byCourse", fields: ["courseID", "path"]) {
+  id: ID!
+  courseID: ID!
+  course: Course @connection(fields: ["courseID"])
+  path: String!
+}
+

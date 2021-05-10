@@ -1,3 +1,4 @@
+import API, { graphqlOperation } from "@aws-amplify/api";
 import {
   Button,
   Card,
@@ -7,6 +8,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import React from "react";
+import { useSession } from "../contexts/userContext";
+import { createCustomer, createOwnCourse } from "../graphql/mutations";
 import wallet from "../img/wallet.png";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,32 +46,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Payment() {
+export default function Payment({ course }) {
   const classes = useStyles();
+  const { user } = useSession();
+
+  const payNow = async () => {
+    try {
+      const myCourse = await API.graphql(
+        graphqlOperation(createOwnCourse, {
+          input: { id: course.id, customerID: user?.sub },
+        })
+      );
+      console.log(myCourse);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Container maxWidth="sm" className={classes.root}>
       <Card className={classes.card}>
         <CardContent>
           <Typography variant="h6" component="h2">
-            UI Design With Figma
+            {course.title}
           </Typography>
           <div className={classes.price}>
-            <Typography variant="p">Total price</Typography>
+            <Typography>Total price</Typography>
             <Typography variant="h6" color="primary">
-              $45
+              ${course.price}
             </Typography>
           </div>
           <div className={classes.boxCard}>
             <Card className={classes.inCard}>
-              <img src={wallet} width={30} />
+              <img src={wallet} width={30} alt="wallet" />
               <Typography>My Wallet</Typography>
-              <Typography>$ 3,500</Typography>
+              {user ? (
+                <Typography>$ {user["custom:wallet"]}</Typography>
+              ) : (
+                <></>
+              )}
             </Card>
           </div>
           <Button
             className={classes.button}
             variant="contained"
             color="secondary"
+            onClick={payNow}
           >
             Pay Now
           </Button>

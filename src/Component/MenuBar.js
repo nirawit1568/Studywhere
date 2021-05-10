@@ -1,8 +1,9 @@
-import { Button, Box } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import React from "react";
 import logo from "../img/logo.png";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import { useSession } from "../contexts/userContext";
 
 const useStyles = makeStyles((theme) => ({
   gButton: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 function MenuBar() {
   const classes = useStyles();
+  const { logout, user } = useSession();
   return (
     <div className="menubar">
       <Link to="/" className={classes.logoW}>
@@ -36,18 +38,35 @@ function MenuBar() {
         </p>
       </Link>
       <div className={classes.gButton}>
-        <Button className={classes.button} component={Link} to="/my-course">
-          MY Course
-        </Button>
-        <Button
-          className={classes.button}
-          variant="contained"
-          color="primary"
-          component={Link}
-          to="/signin"
-        >
-          Sign in
-        </Button>
+        {user ? (
+          <>
+            <Button className={classes.button} component={Link} to="/my-course">
+              MY Course
+            </Button>
+            <Button className={classes.button} component={Link} to="/my-wallet">
+              My Wallet
+            </Button>
+
+            <Button
+              className={classes.button}
+              variant="contained"
+              color="primary"
+              onClick={logout}
+            >
+              Sign Out
+            </Button>
+          </>
+        ) : (
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            component={Link}
+            to="/signin"
+          >
+            Sign in
+          </Button>
+        )}
       </div>
     </div>
   );

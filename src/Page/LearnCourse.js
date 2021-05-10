@@ -1,15 +1,42 @@
-import React from "react";
-import video from "../img/video.png";
+import React, { useState, useEffect } from "react";
 import folder from "../img/folder.png";
-import send from "../img/send.png";
+import { useParams } from "react-router-dom";
+import API, { graphqlOperation } from "@aws-amplify/api";
+import { getCourse } from "../graphql/queries";
+import ReactPlayer from "react-player";
 
 function LearnCourse() {
+  const { id } = useParams();
+  const [course, setCourse] = useState([]);
+
+  useEffect(() => {
+    fetchCourse();
+  }, []);
+
+  const fetchCourse = async () => {
+    try {
+      const data = await API.graphql(graphqlOperation(getCourse, { id: id }));
+      const list = data.data.getCourse;
+      setCourse(list);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // console.log(course.video.items[0].path);
+
   return (
     <div className="learncourse">
       <div className="learn">
         <div className="video">
-          <h1>Course - Name Course</h1>
-          <img src={video} alt="video-pic" />
+          <h1>{course?.title}</h1>
+          <ReactPlayer
+            className="react-player fixed-bottom"
+            url={course?.video?.items[0]?.path}
+            width="100%"
+            height="100%"
+            controls={true}
+          />
         </div>
         <div className="lesson">
           <h1>Lessons</h1>
@@ -32,7 +59,7 @@ function LearnCourse() {
           <a href="/">Finished Course</a>
         </div>
       </div>
-      <div className="writecomment">
+      {/* <div className="writecomment">
         <h2>Do you want comment this course?</h2>
         <div className="boxcomment">
           <input type="text" className="inputcomment"></input>
@@ -40,7 +67,7 @@ function LearnCourse() {
             <img src={send} alt="send-pic"></img>
           </a>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

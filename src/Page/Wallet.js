@@ -1,49 +1,101 @@
-import React from 'react'
-import card from '../img/card.png'
-import wallet from "../img/wallet.png"
-import Button from "@material-ui/core/Button";
-import { Link } from "react-router-dom";
-function Wallet () {
-    return(
-        <div className="Wallet">
-            <div className="wallet-left">
-                <img src={card}></img>
-            </div>
-            <div className="wallet-right">
-                <h3>Top up my wallet</h3>
-                <div className="mywallet">
-                    <img src={wallet}></img>
-                    <p>My Wallet</p>
-                    <p>$3,500</p>
-                </div>
-                <br></br>
-                <p>CARDHOLDER NAME</p>
-                <input type="text" className="creditcard"></input>
-                <p>CARD NUMBER</p>
-                <input type="number" className="creditcard"></input>
-                <div className="secret">
-                    <div className="secret-box">
-                        <p>EXPIRY DATE</p>
-                        <input type="number" className="creditcard-small"></input>
-                    </div>
-                    <div className="secret-box">
-                        <p>CVV</p>
-                        <input type="number" className="creditcard-small"></input>
-                    </div>
-                </div>
-                <br></br>
-                <h2>TOP UP AMOUNT : $ 200</h2>
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    component={Link}
-                    to="/my-course"
-                    className="btn-pay"
-                >
-                    pay now
-                </Button>
-            </div>
-        </div>
-    );
+import {
+  Button,
+  Card,
+  CardContent,
+  Container,
+  makeStyles,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import React from "react";
+import { useSession } from "../contexts/userContext";
+import wallet from "../img/wallet.png";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: "5vw",
+  },
+  card: {
+    // padding: theme.spacing(2),
+    width: 650,
+    background: theme.palette.primary.light,
+  },
+  boxCard: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  inCard: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: 450,
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(1),
+  },
+  price: {
+    marginTop: theme.spacing(2),
+  },
+  button: {
+    marginTop: theme.spacing(2),
+    width: 200,
+  },
+  field: {
+    width: 450,
+  },
+}));
+
+export default function Wallet() {
+  const classes = useStyles();
+  const [amount, setAmount] = React.useState(0);
+  const { updates, user } = useSession();
+
+  const topUp = React.useCallback(
+    async (e) => {
+      e.preventDefault();
+      await updates(amount);
+    },
+    [updates, amount]
+  );
+  return (
+    <Container maxWidth="sm" className={classes.root}>
+      <Card className={classes.card}>
+        <CardContent>
+          <div className={classes.boxCard}>
+            <Card className={classes.inCard}>
+              <img src={wallet} width={30} alt="wallet" />
+              <Typography>My Wallet</Typography>
+              {user ? (
+                <Typography>$ {user["custom:wallet"]}</Typography>
+              ) : (
+                <></>
+              )}
+            </Card>
+          </div>
+          <TextField
+            label="Amount"
+            name="amount"
+            type="number"
+            InputProps={{ disableUnderline: true }}
+            className={classes.field}
+            variant="filled"
+            size="small"
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="secondary"
+            onClick={topUp}
+          >
+            Top Up
+          </Button>
+        </CardContent>
+      </Card>
+    </Container>
+  );
 }
-export default Wallet;

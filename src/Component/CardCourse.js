@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import CardMedia from "@material-ui/core/CardMedia";
 import money from "../img/Money.png";
 import { Link } from "react-router-dom";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -52,17 +53,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CardCourse({ data, show, bColor }) {
   const classes = useStyles();
-  const { media, title, description, creator, price } = data;
+  const { cover, title, description, author, price, id } = data;
   return (
     <Card
       className={classes.root}
       style={{ background: bColor ? "#fff" : "#F5F5F7" }}
     >
-      <CardMedia className={classes.cardMedia} image={media} title="image" />
+      <CardMedia className={classes.cardMedia} image={cover} title="image" />
       <CardContent className={classes.cardCon}>
         <Typography variant="h6">{title}</Typography>
         <Typography className={classes.textDes}>{description}</Typography>
-        <Typography variant="subtitle2">Created by : {creator}</Typography>
+        <Typography variant="subtitle2">Created by : {author}</Typography>
       </CardContent>
       <div className={classes.endCard}>
         <div className={show ? classes.money : classes.noShow}>
@@ -76,7 +77,7 @@ export default function CardCourse({ data, show, bColor }) {
             variant="contained"
             color="secondary"
             component={Link}
-            to="/course/id"
+            to={"/course/" + id}
           >
             View Course
           </Button>
