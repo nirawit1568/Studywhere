@@ -2,7 +2,7 @@ import "./App.css";
 import BuyCourse from "./Page/BuyCourse";
 import LearnCourse from "./Page/LearnCourse";
 import SignIn from "./Page/SignIn";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import Home from "./Page/Home";
 import SignUp from "./Page/SignUp";
 import MenuBar from "./Component/MenuBar";
@@ -10,14 +10,23 @@ import CustomTheme from "./Component/Theme";
 import { Container } from "@material-ui/core";
 import MyCourse from "./Page/MyCourse";
 import Wallet from "./Page/Wallet";
+import { useSession } from "./contexts/userContext";
 
 function App() {
+  const { user } = useSession();
   return (
     <CustomTheme>
       <MenuBar />
       <Container style={{ marginTop: 25 }}>
         <Switch>
-          <Route exact path="/">
+          <Route
+            exact
+            render={() => {
+              return user ? <Redirect to="/home" /> : <Redirect to="/signin" />;
+            }}
+            path="/"
+          ></Route>
+          <Route exact path="/home">
             <Home />
           </Route>
           <Route exact path="/signin">

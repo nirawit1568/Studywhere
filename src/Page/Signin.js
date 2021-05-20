@@ -7,8 +7,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { useState, useCallback } from "react";
-// import imgG from "../img/google.png";
-// import imgF from "../img/facebook.png";
 import { Link } from "react-router-dom";
 import { useSession } from "../contexts/userContext";
 

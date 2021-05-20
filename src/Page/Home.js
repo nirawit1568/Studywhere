@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button, makeStyles } from "@material-ui/core";
 import CardCourse from "../Component/CardCourse";
-import { useSession } from "../contexts/userContext";
 import API, { graphqlOperation } from "@aws-amplify/api";
-import { listCourses } from "../graphql/queries";
-import { createCustomer } from "../graphql/mutations";
+import { getCustomer, listCourses } from "../graphql/queries";
+import { useSession } from "../contexts/userContext";
 const useStyles = makeStyles({
   button: {
     fontWeight: "bold",
@@ -16,41 +15,31 @@ export default function Home() {
   const classes = useStyles();
   const { user } = useSession();
   const [course, setCourse] = useState([]);
-
+  let [cId, setCId] = useState();
   useEffect(() => {
     fetchCourse();
-  }, []);
+  }, [user]);
 
   const fetchCourse = async () => {
     try {
-      const data = await API.graphql(graphqlOperation(listCourses));
-      const list = data.data.listCourses.items;
-      setCourse(list);
+      if (user) {
+        const id = [];
+        const dataM = await API.graphql(
+          graphqlOperation(getCustomer, { id: user?.sub })
+        );
+        const list_m = dataM.data.getCustomer.course.items;
+        await list_m.map((course) => id.push(course.id));
+        setCId(id);
+        const data = await API.graphql(graphqlOperation(listCourses));
+        const list = data.data.listCourses.items;
+        setCourse(list);
+      }
     } catch (e) {
       console.log(e);
     }
   };
-
-  const upCustomer = async () => {
-    try {
-      const customer = await API.graphql(
-        graphqlOperation(createCustomer, { input: { id: user?.sub } })
-      );
-      console.log(customer);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   return (
     <>
-      {/* <Button
-        size="large"
-        className={selButton === 1 ? classes.button : classes.but}
-        onClick={upCustomer}
-      >
-        Create My course
-      </Button> */}
       <div>
         <Button
           size="large"
@@ -75,8 +64,14 @@ export default function Home() {
         </Button>
       </div>
       {course.map((data) => (
-        <CardCourse key={"548" + data.title} data={data} show={true} />
+        <CardCourse
+          key={"548" + data.title}
+          data={data}
+          show={true}
+          view={cId.includes(data.id)}
+        />
       ))}
+
       {/* <CardCourse show={true} /> */}
     </>
   );

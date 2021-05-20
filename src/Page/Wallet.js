@@ -4,9 +4,11 @@ import {
   CardContent,
   Container,
   makeStyles,
+  Snackbar,
   TextField,
   Typography,
 } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import React from "react";
 import { useSession } from "../contexts/userContext";
 import wallet from "../img/wallet.png";
@@ -53,14 +55,25 @@ export default function Wallet() {
   const classes = useStyles();
   const [amount, setAmount] = React.useState(0);
   const { updates, user } = useSession();
+  const [load, setLoad] = React.useState(false);
+  const [noti, setNoti] = React.useState(false);
 
   const topUp = React.useCallback(
     async (e) => {
       e.preventDefault();
-      await updates(amount);
+      setLoad(true);
+      await updates(amount, false);
+      setAmount(0);
+      setLoad(false);
+      setNoti(true);
     },
     [updates, amount]
   );
+
+  const handleClose = () => {
+    setNoti(false);
+  };
+
   return (
     <Container maxWidth="sm" className={classes.root}>
       <Card className={classes.card}>
@@ -84,18 +97,33 @@ export default function Wallet() {
             className={classes.field}
             variant="filled"
             size="small"
+            value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <Button
-            className={classes.button}
-            variant="contained"
-            color="secondary"
-            onClick={topUp}
-          >
-            Top Up
-          </Button>
+          {load ? (
+            <Button
+              className={classes.button}
+              variant="contained"
+              color="secondary"
+              disable
+            >
+              Top Up
+            </Button>
+          ) : (
+            <Button
+              className={classes.button}
+              variant="contained"
+              color="secondary"
+              onClick={topUp}
+            >
+              Top Up
+            </Button>
+          )}
         </CardContent>
       </Card>
+      <Snackbar open={noti} autoHideDuration={5000} onClose={handleClose}>
+        <Alert severity="success">Successfully topped up</Alert>
+      </Snackbar>
     </Container>
   );
 }

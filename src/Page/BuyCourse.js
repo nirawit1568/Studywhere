@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import imgCourse from "../img/Course4.jpg";
 import buy from "../img/Money.png";
 import { useParams } from "react-router-dom";
 import API, { graphqlOperation } from "@aws-amplify/api";
@@ -44,7 +42,13 @@ function BuyCourse() {
                   <img src={buy} alt="price-course" />
                   <h2>$ {course.price}</h2>
                 </div>
-                <Button onClick={() => setPay(1)}>BUY COURSE</Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setPay(1)}
+                >
+                  BUY COURSE
+                </Button>
               </div>
             </div>
             <div className="bottom">

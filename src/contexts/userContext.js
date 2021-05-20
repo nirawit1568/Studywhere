@@ -7,23 +7,29 @@ import {
 } from "react";
 import Auth from "@aws-amplify/auth";
 import { useHistory } from "react-router-dom";
+import { graphqlOperation } from "@aws-amplify/api-graphql";
+import { createCustomer } from "../graphql/mutations";
+import API from "@aws-amplify/api";
+import { Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 const userContext = createContext();
 
 export const UserProvider = (props) => {
   const { children } = props;
   const [user, setUser] = useState(null);
-  const [isLogin, setIsLogin] = useState(false);
   const [updates, setUpdates] = useState(null);
-
+  const [err, setErr] = useState(false);
   const history = useHistory();
 
+  const handleClose = () => {
+    setErr(false);
+  };
   const handleLogout = useCallback(async () => {
     try {
       await Auth.signOut({ global: true });
-      setIsLogin(false);
-      history.push("/");
-      console.log("Sign out");
+      setUser(null);
+      history.push("/signin");
     } catch (error) {
       console.log("error signing out: ", error);
     }
@@ -33,10 +39,24 @@ export const UserProvider = (props) => {
     async (username, password) => {
       try {
         const data = await Auth.signIn(username, password);
-        setIsLogin(true);
-        setUser(data.attributes);
+        if (data.attributes["custom:course"] === "no") {
+          console.log(data.attributes);
+          await API.graphql(
+            graphqlOperation(createCustomer, {
+              input: { id: data.attributes?.sub },
+            })
+          );
+          await Auth.updateUserAttributes(data, {
+            "custom:course": "has",
+          });
+          const us = await Auth.signIn(username, password);
+          setUser(us.attributes);
+        } else {
+          setUser(data.attributes);
+        }
         history.push("/");
       } catch (error) {
+        setErr(true);
         console.log(error);
       }
     },
@@ -54,17 +74,22 @@ export const UserProvider = (props) => {
       }
     };
     getUser();
-  }, [isLogin, updates]);
+  }, [updates]);
   const updatesWallet = useCallback(
-    async (amount) => {
+    async (amount, pay) => {
       if (user) {
         try {
           const data = await Auth.currentAuthenticatedUser();
-          const result = await Auth.updateUserAttributes(data, {
-            "custom:wallet": +user["custom:wallet"] + +amount + "",
-          });
+          if (pay) {
+            await Auth.updateUserAttributes(data, {
+              "custom:wallet": +user["custom:wallet"] - +amount + "",
+            });
+          } else {
+            await Auth.updateUserAttributes(data, {
+              "custom:wallet": +user["custom:wallet"] + +amount + "",
+            });
+          }
           setUpdates(Math.random() * 10);
-          console.log(result);
         } catch (error) {
           console.log(error);
         }
@@ -83,6 +108,9 @@ export const UserProvider = (props) => {
       }}
     >
       {children}
+      <Snackbar open={err} autoHideDuration={5000} onClose={handleClose}>
+        <Alert severity="error">Entered the wrong password or email.</Alert>
+      </Snackbar>
     </userContext.Provider>
   );
 };

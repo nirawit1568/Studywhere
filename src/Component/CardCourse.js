@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CardCourse({ data, show, bColor }) {
+export default function CardCourse({ data, show, bColor, view }) {
   const classes = useStyles();
   const { cover, title, description, author, price, id } = data;
   return (
@@ -73,14 +73,25 @@ export default function CardCourse({ data, show, bColor }) {
           </Typography>
         </div>
         <div>
-          <Button
-            variant="contained"
-            color="secondary"
-            component={Link}
-            to={"/course/" + id}
-          >
-            View Course
-          </Button>
+          {view ? (
+            <Button
+              variant="contained"
+              color="secondary"
+              component={Link}
+              to={"/learn/" + id}
+            >
+              View Course
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              component={Link}
+              to={"/course/" + id}
+            >
+              View Course
+            </Button>
+          )}
         </div>
       </div>
     </Card>

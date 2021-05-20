@@ -1,15 +1,21 @@
 import API, { graphqlOperation } from "@aws-amplify/api";
 import {
+  Backdrop,
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   makeStyles,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogActions,
 } from "@material-ui/core";
-import React from "react";
+import React, { useState } from "react";
+import { useHistory } from "react-router";
 import { useSession } from "../contexts/userContext";
-import { createCustomer, createOwnCourse } from "../graphql/mutations";
+import { createOwnCourse } from "../graphql/mutations";
 import wallet from "../img/wallet.png";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,27 +50,47 @@ const useStyles = makeStyles((theme) => ({
   button: {
     width: 200,
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
 }));
 
 export default function Payment({ course }) {
   const classes = useStyles();
-  const { user } = useSession();
+  const history = useHistory();
+  const { user, updates } = useSession();
+  const [load, setLoad] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const payNow = async () => {
     try {
-      const myCourse = await API.graphql(
+      setOpen(false);
+      setLoad(true);
+      await API.graphql(
         graphqlOperation(createOwnCourse, {
           input: { id: course.id, customerID: user?.sub },
         })
       );
-      console.log(myCourse);
+      setLoad(false);
+      updates(course.price, true);
+      history.push("/my-course");
     } catch (e) {
       console.log(e);
     }
   };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <Container maxWidth="sm" className={classes.root}>
+      <Backdrop className={classes.backdrop} open={load}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Card className={classes.card}>
         <CardContent>
           <Typography variant="h6" component="h2">
@@ -91,12 +117,30 @@ export default function Payment({ course }) {
             className={classes.button}
             variant="contained"
             color="secondary"
-            onClick={payNow}
+            onClick={handleClickOpen}
           >
             Pay Now
           </Button>
         </CardContent>
       </Card>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Want to buy {course.name} course for $ {course.price} ?
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Disagree
+          </Button>
+          <Button onClick={payNow} color="primary" autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

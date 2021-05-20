@@ -14,6 +14,7 @@ import CardCourse from "../Component/CardCourse";
 import API, { graphqlOperation } from "@aws-amplify/api";
 import { getCustomer, listCourses } from "../graphql/queries";
 import { useSession } from "../contexts/userContext";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -68,12 +69,6 @@ export default function MyCourse() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  useEffect(() => {
-    if (user) {
-      fetchMyCourse();
-    }
-  }, [user]);
-
   const fetchMyCourse = async () => {
     try {
       const id = [];
@@ -88,28 +83,15 @@ export default function MyCourse() {
       });
       const list_c = data_c.data.listCourses.items;
       setCourse(list_c);
-      console.log(list_c);
     } catch (e) {
       console.log(e);
     }
   };
-
-  // const fetchCourse = async () => {
-  //   try {
-  //     const filter = {
-  //       or: [{ id: { eq: "c1" } }, { id: { eq: "c2" } }],
-  //     };
-  //     // const data = await API.graphql(graphqlOperation(listCourses));
-  //     const data = await API.graphql({
-  //       query: listCourses,
-  //       variables: { filter: filter },
-  //     });
-  //     const list = data.data.listCourses.items;
-  //     setCourse(list);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+  useEffect(() => {
+    if (user) {
+      fetchMyCourse();
+    }
+  }, [user]);
 
   return (
     <>
@@ -118,10 +100,15 @@ export default function MyCourse() {
           <Grid container>
             <Grid item xs={5}>
               <Typography variant="h4" component="h1" className={classes.hi}>
-                {user["custom:name"]}
+                HI{user ? user["custom:name"] : <></>}
               </Typography>
               <Typography>It’s good to see you again</Typography>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/"
+              >
                 {"Learn even more >"}
               </Button>
             </Grid>
@@ -160,7 +147,13 @@ export default function MyCourse() {
             <Tab label="Finished" />
           </Tabs>
           {course.map((data) => (
-            <CardCourse key={data.id} data={data} show={false} bColor={true} />
+            <CardCourse
+              key={data.id}
+              data={data}
+              show={false}
+              bColor={true}
+              view={true}
+            />
           ))}
         </CardContent>
       </Card>

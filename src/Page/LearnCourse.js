@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import folder from "../img/folder.png";
 import { useParams } from "react-router-dom";
 import API, { graphqlOperation } from "@aws-amplify/api";
 import { getCourse } from "../graphql/queries";
@@ -29,7 +28,7 @@ function LearnCourse() {
     <div className="learncourse">
       <div className="learn">
         <div className="video">
-          <h1>{course?.title}</h1>
+          <h1 style={{ marginBottom: 15 }}>{course?.title}</h1>
           <ReactPlayer
             className="react-player fixed-bottom"
             url={course?.video?.items[0]?.path}
@@ -38,7 +37,7 @@ function LearnCourse() {
             controls={true}
           />
         </div>
-        <div className="lesson">
+        {/* <div className="lesson">
           <h1>Lessons</h1>
           <div className="list">
             <img src={folder} alt="folder-list" />
@@ -57,17 +56,8 @@ function LearnCourse() {
             <p>Lesson 4 : .......</p>
           </div>
           <a href="/">Finished Course</a>
-        </div>
+        </div> */}
       </div>
-      {/* <div className="writecomment">
-        <h2>Do you want comment this course?</h2>
-        <div className="boxcomment">
-          <input type="text" className="inputcomment"></input>
-          <a href="/">
-            <img src={send} alt="send-pic"></img>
-          </a>
-        </div>
-      </div> */}
     </div>
   );
 }
